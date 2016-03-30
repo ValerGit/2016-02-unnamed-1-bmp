@@ -138,7 +138,8 @@ public class SignUpServletTest {
         final SignUpServlet signUpServlet = new SignUpServlet(context);
         signUpServlet.doPost(request, response);
 
-        verify(response).setStatus(HttpServletResponse.SC_FORBIDDEN);
+        verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        assertThat(stringWriter.toString(), StringContains.containsString("{\"id\":1"));
     }
 
 
@@ -175,122 +176,6 @@ public class SignUpServletTest {
         signUpServlet.doGet(request, response);
 
         verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
-    }
-
-
-    @Test
-    public void testDoPut() throws IOException, ServletException, DatabaseException {
-        final StringWriter stringWriter = new StringWriter();
-        final HttpServletResponse response = getMockedResponse(stringWriter);
-        final HttpServletRequest request = getMockedRequest();
-
-        final String input = "{\"login\":\"admin\",\"password\":\"admin\"}";
-        final BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(IOUtils.toInputStream(input)));
-        final UserDataSet newUser = mock(UserDataSet.class);
-
-        when(request.getReader()).thenReturn(bufferedReader);
-        when(request.getPathInfo()).thenReturn("/1");
-        when(newUser.getId()).thenReturn(1L);
-        when(userService.updateUserInfo(anyLong(),  anyString(), anyString())).thenReturn(true);
-        when(userService.getUserById(1L)).thenReturn(newUser);
-
-        final SignUpServlet signUpServlet = new SignUpServlet(context);
-        signUpServlet.doPut(request, response);
-
-        verify(response).setStatus(HttpServletResponse.SC_OK);
-        assertThat(stringWriter.toString(), StringContains.containsString("{\"id\":1"));
-    }
-
-
-    @Test
-    public void testDoPutWrongId() throws IOException, ServletException {
-        final StringWriter stringWriter = new StringWriter();
-        final HttpServletResponse response = getMockedResponse(stringWriter);
-        final HttpServletRequest request = getMockedRequest();
-
-        when(request.getPathInfo()).thenReturn("/admin");
-
-        final SignUpServlet signUpServlet = new SignUpServlet(context);
-        signUpServlet.doPut(request, response);
-
-        verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
-    }
-
-
-    @Test
-    public void testDoPutNotAllParams() throws IOException, ServletException, DatabaseException {
-        final StringWriter stringWriter = new StringWriter();
-        final HttpServletResponse response = getMockedResponse(stringWriter);
-        final HttpServletRequest request = getMockedRequest();
-
-        final String input = "{\"login\":\"admin\",\"pass\":\"admin\"}";
-        final BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(IOUtils.toInputStream(input)));
-        final UserDataSet newUser = mock(UserDataSet.class);
-
-        when(request.getReader()).thenReturn(bufferedReader);
-        when(request.getPathInfo()).thenReturn("/1");
-        when(newUser.getId()).thenReturn(1L);
-        when(userService.updateUserInfo(anyLong(),  anyString(), anyString())).thenReturn(true);
-        when(userService.getUserById(1L)).thenReturn(newUser);
-
-        final SignUpServlet signUpServlet = new SignUpServlet(context);
-        signUpServlet.doPut(request, response);
-
-        verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
-    }
-
-
-    @Test
-    public void testDoDelete() throws IOException, ServletException, DatabaseException {
-        final StringWriter stringWriter = new StringWriter();
-        final HttpServletResponse response = getMockedResponse(stringWriter);
-        final HttpServletRequest request = getMockedRequest();
-        final UserDataSet newUser = mock(UserDataSet.class);
-
-        when(request.getPathInfo()).thenReturn("/1");
-        when(userService.getUserById(anyLong())).thenReturn(newUser);
-        when(userService.deleteUserById(anyLong())).thenReturn(true);
-
-        final SignUpServlet signUpServlet = new SignUpServlet(context);
-        signUpServlet.doDelete(request, response);
-
-        verify(response).setStatus(HttpServletResponse.SC_OK);
-        assertThat(stringWriter.toString(), StringContains.containsString("{}"));
-    }
-
-
-    @Test
-    public void testDoDeleteFail() throws IOException, ServletException, DatabaseException {
-        final StringWriter stringWriter = new StringWriter();
-        final HttpServletResponse response = getMockedResponse(stringWriter);
-        final HttpServletRequest request = getMockedRequest();
-        final UserDataSet newUser = mock(UserDataSet.class);
-
-        when(request.getPathInfo()).thenReturn("/1");
-        when(userService.getUserById(anyLong())).thenReturn(newUser);
-        when(userService.deleteUserById(anyLong())).thenReturn(false);
-
-        final SignUpServlet signUpServlet = new SignUpServlet(context);
-        signUpServlet.doDelete(request, response);
-
-        verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
-    }
-
-
-    @Test
-    public void testDoDeleteNumExept() throws IOException, ServletException {
-        final StringWriter stringWriter = new StringWriter();
-        final HttpServletResponse response = getMockedResponse(stringWriter);
-        final HttpServletRequest request = getMockedRequest();
-        final UserDataSet newUser = mock(UserDataSet.class);
-
-        when(request.getPathInfo()).thenReturn("/111111111111111111111111");
-
-        final SignUpServlet signUpServlet = new SignUpServlet(context);
-        signUpServlet.doDelete(request, response);
-
-        verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
-        assertThat(stringWriter.toString(), StringContains.containsString("{\"error\":\"Wrong request\""));
     }
 
 

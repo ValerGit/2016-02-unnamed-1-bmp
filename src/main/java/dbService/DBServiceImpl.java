@@ -2,6 +2,7 @@ package dbservice;
 
 import base.DBService;
 import base.HibernateUnit;
+import base.HibernateUnitVoid;
 import base.datasets.UserDataSet;
 import com.sun.istack.internal.NotNull;
 import com.sun.istack.internal.Nullable;
@@ -49,7 +50,26 @@ public class DBServiceImpl implements DBService {
                     || session.getTransaction().getStatus() == TransactionStatus.MARKED_ROLLBACK ) {
                 session.getTransaction().rollback();
             }
-            throw new DatabaseException(e);
+            throw new DatabaseException("Fail to perform database transaction",e);
+        } finally {
+            session.close();
+        }
+    }
+
+    @Override
+    @Nullable
+    public void doWork(@NotNull HibernateUnitVoid work) throws DatabaseException {
+        final Session session = sessionFactory.openSession();
+        try {
+            session.getTransaction().begin();
+            work.operate(session);
+            session.getTransaction().commit();
+        } catch ( RuntimeException e ) {
+            if ( session.getTransaction().getStatus() == TransactionStatus.ACTIVE
+                    || session.getTransaction().getStatus() == TransactionStatus.MARKED_ROLLBACK ) {
+                session.getTransaction().rollback();
+            }
+            throw new DatabaseException("Fail to perform database transaction",e);
         } finally {
             session.close();
         }

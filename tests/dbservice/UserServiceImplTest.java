@@ -53,16 +53,4 @@ public class UserServiceImplTest {
         assertEquals("adminNew",userService.getUserById(addedId).getLogin());
     }
 
-    @Test
-    public void testDeleteUserById() throws DatabaseException {
-        userService.saveUser(new UserDataSet("admin", "admin", "admin@admin.com"));
-        final long addedId = userService.getUserByEmail("admin@admin.com").getId();
-        assertTrue(userService.deleteUserById(addedId));
-        assertTrue(userService.getUserById(addedId) == null);
-    }
-
-    @Test
-    public void testDeleteUserByIdFail() throws DatabaseException {
-        assertFalse(userService.deleteUserById(100000L));
-    }
 }

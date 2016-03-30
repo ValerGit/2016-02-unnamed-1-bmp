@@ -7,9 +7,8 @@ import org.hibernate.annotations.Type;
 
 @Entity
 @Table(name= "users", indexes = {
-        @Index(name="deleted_idx", columnList = "user_is_del"),
-        @Index(name="login_idx", columnList = "user_login," + "user_is_del"),
-        @Index(name="email_idx", columnList = "user_email," + "user_is_del")
+        @Index(name="login_idx", columnList = "user_login"),
+        @Index(name="email_idx", columnList = "user_email")
 })
 public class UserDataSet implements Serializable {
 
@@ -27,10 +26,6 @@ public class UserDataSet implements Serializable {
     @Column(name = "user_email", unique = true)
     private String email;
 
-    @Column(name = "user_is_del")
-    @Type(type="yes_no")
-    private Boolean isDeleted;
-
     public UserDataSet() {
 
     }
@@ -40,7 +35,6 @@ public class UserDataSet implements Serializable {
         this.login = login;
         this.password = password;
         this.email = email;
-        this.isDeleted = false;
     }
 
     public void updateUser(String log, String pass, String mail){
@@ -71,10 +65,6 @@ public class UserDataSet implements Serializable {
 
     public void setEmail(String mail) {
         this.email = mail;
-    }
-
-    public void setDeleted() {
-        this.isDeleted = true;
     }
 
     public Long getId() {

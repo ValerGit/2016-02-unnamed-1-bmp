@@ -7,7 +7,7 @@ import dbservice.DatabaseException;
 import java.util.List;
 
 public interface UserService {
-    boolean saveUser (UserDataSet dataSet) throws DatabaseException;
+    void saveUser (UserDataSet dataSet) throws DatabaseException;
 
     UserDataSet getUserById (long id) throws DatabaseException;
 
@@ -17,7 +17,9 @@ public interface UserService {
 
     boolean updateUserInfo(Long id, String login, String pass) throws DatabaseException;
 
-    boolean deleteUserById(Long id) throws DatabaseException;
+    List<UserDataSet> getUsers() throws DatabaseException;
 
-    List<UserDataSet> getUsers(boolean allUsers) throws DatabaseException;
+    boolean isEmailUnique(String email) throws DatabaseException;
+
+    boolean isLoginUnique(String login) throws DatabaseException;
 }

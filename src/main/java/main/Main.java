@@ -67,8 +67,7 @@ public class Main {
             server.join();
 
         } catch (LaunchException e) {
-            LOGGER.error(e.getError());
-            LOGGER.error(e.getHibernateException().getMessage());
+            LOGGER.fatal("failed launching server", e);
         }
     }
 }

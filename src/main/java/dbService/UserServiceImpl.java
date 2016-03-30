@@ -20,15 +20,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean saveUser(UserDataSet dataSet) throws DatabaseException {
-        return dbService.doReturningWork((session)-> {
+    public void saveUser(UserDataSet dataSet) throws DatabaseException {
+        dbService.doWork((session)-> {
             final UserDataSetDAO dao = new UserDataSetDAO(session);
-            if ( !dao.checkUniqueEmail(dataSet.getEmail()) || !dao.checkUniqueLogin(dataSet.getLogin()) ) {
-                LOGGER.error("Fail to add new user");
-                return false;
-            }
             dao.save(dataSet);
-            return true;
         });
     }
 
@@ -76,25 +71,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean deleteUserById(Long id) throws DatabaseException {
+    public List<UserDataSet> getUsers() throws DatabaseException {
         return dbService.doReturningWork((session)-> {
             final UserDataSetDAO dao = new UserDataSetDAO(session);
-            final boolean succeed = dao.markAsDeletedById(id);
-            if (!succeed) {
-                LOGGER.error("Fail to delete user #{}", id);
-                return false;
-            }
-            LOGGER.info("Deleted user #{}", id);
-            return true;
+            return dao.readAll();
         });
     }
 
     @Override
-    public List<UserDataSet> getUsers(boolean getAll) throws DatabaseException {
+    public boolean isEmailUnique(String email) throws DatabaseException {
         return dbService.doReturningWork((session)-> {
             final UserDataSetDAO dao = new UserDataSetDAO(session);
-            return dao.readAll(getAll);
+            return dao.checkUniqueEmail(email);
         });
     }
 
+    @Override
+    public boolean isLoginUnique(String login) throws DatabaseException {
+        return dbService.doReturningWork((session)-> {
+            final UserDataSetDAO dao = new UserDataSetDAO(session);
+            return dao.checkUniqueLogin(login);
+        });
+    }
 }
