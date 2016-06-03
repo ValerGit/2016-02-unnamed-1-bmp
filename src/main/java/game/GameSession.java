@@ -178,6 +178,10 @@ public class GameSession implements Abonent {
                     messageSystem.getAddressService().getWebSocketServiceAddress(),
                     gameUser, true));
             if(opponent != null) {
+                if(opponent.isBot()) {
+                    final Long uid = gameUser.getUser() == null ? 0 : gameUser.getUser().getId();
+                    LOGGER.info("USER WON BOT: user name {}, user id {}", gameUser.getName(), uid);
+                }
                 messageSystem.sendMessage(new MessageNotifyGameOver(this.address,
                         messageSystem.getAddressService().getWebSocketServiceAddress(),
                         opponent, false));
